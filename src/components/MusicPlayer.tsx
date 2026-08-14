@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Play, Pause, SkipBack, SkipForward, Radio, Disc } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Radio, Disc, CassetteTape, AudioLines, Headphones } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useJourney } from '../store/JourneyContext';
 import { MUSIC_PLAYLISTS } from '../constants/audio';
@@ -248,13 +248,16 @@ export function MusicPlayer() {
             />
           </div>
 
-          {/* Cassette / Art Icon (Click to open selector) */}
+          {/* Retro Cassette Tape Icon (Click to open playlist selector) */}
           <button 
             onClick={() => setShowSelector(true)}
-            className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center shrink-0 hover:scale-105 active:scale-95 transition-transform"
-            title="Change Cassette Tape"
+            className="w-7 h-7 sm:w-8.5 sm:h-8.5 rounded-full bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 flex items-center justify-center shrink-0 hover:scale-105 active:scale-95 transition-all shadow-[0_0_12px_rgba(245,158,11,0.3)] relative group/cassette"
+            title="Change Cassette Tape (कैसेट टेप बदलें)"
           >
-            <Disc className={`w-3 h-3 sm:w-4 sm:h-4 text-amber-400 ${isPlaying && !isBuffering ? 'animate-spin' : 'opacity-70'}`} style={{ animationDuration: '4s' }} />
+            <CassetteTape className={`w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 ${isPlaying && !isBuffering ? 'animate-pulse' : 'opacity-70'}`} />
+            {isPlaying && !isBuffering && (
+              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+            )}
           </button>
 
           {/* Track Info */}
