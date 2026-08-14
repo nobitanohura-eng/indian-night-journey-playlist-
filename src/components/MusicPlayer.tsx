@@ -21,6 +21,8 @@ export function MusicPlayer() {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isLofiMode, setIsLofiMode] = useState(false);
+  const [isBuffering, setIsBuffering] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   // Apply Lo-Fi Slowed + Reverb playbackRate
   useEffect(() => {
