@@ -1,0 +1,19 @@
+# Treat all media and binary files as raw binary to prevent Git / GitHub corruption
+*.mp3 binary
+*.wav binary
+*.ogg binary
+*.m4a binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.gif binary
+*.ico binary
+*.svg text eol=lf
+*.json text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+

@@ -1,0 +1,110 @@
+@import "tailwindcss";
+
+@theme {
+  --animate-rain: rain 1s linear infinite;
+  --animate-pass-light: pass-light 4s linear infinite;
+  --animate-road-scroll: road-scroll 2s linear infinite;
+  --animate-wiper: wiper 2s ease-in-out infinite;
+  --animate-vibrate: vibrate 0.1s linear infinite;
+  --animate-vibrate-slow: vibrate-slow 3s ease-in-out infinite;
+  --animate-fan: spin 1s linear infinite;
+
+  @keyframes rain {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100vh); }
+  }
+
+  @keyframes pass-light {
+    0% { transform: translateX(100vw); }
+    100% { transform: translateX(-100vw); }
+  }
+
+  @keyframes road-scroll {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 100px; }
+  }
+  
+  @keyframes wiper {
+    0% { transform: rotate(0deg); }
+    50% { transform: rotate(90deg); }
+    100% { transform: rotate(0deg); }
+  }
+  
+  @keyframes vibrate {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(0.5px, 0.5px); }
+    50% { transform: translate(-0.5px, -0.5px); }
+    75% { transform: translate(-0.5px, 0.5px); }
+    100% { transform: translate(0, 0); }
+  }
+
+  @keyframes vibrate-slow {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(2px); }
+    100% { transform: translateY(0px); }
+  }
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  background: #000;
+  color: #fff;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+.rotate-x-60 {
+  transform: rotateX(60deg);
+}
+
+/* Custom Range Slider */
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  background: transparent;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  margin-top: -4px;
+  box-shadow: 0 0 10px rgba(255,255,255,0.5);
+}
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+}
+input[type=range]:focus {
+  outline: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-delay: -1ms !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    background-attachment: initial !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+  }
+}

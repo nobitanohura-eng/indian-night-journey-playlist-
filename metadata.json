@@ -1,0 +1,8 @@
+{
+  "name": "Indian Night Journey",
+  "description": "An immersive virtual Indian night-bus journey experience with ambient sounds and a music player.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
