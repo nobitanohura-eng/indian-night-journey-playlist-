@@ -483,10 +483,36 @@ export function JourneyProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const playBarsaatSong = () => {
+    if (activePlaylist) {
+      const barsaatIdx = activePlaylist.tracks.findIndex(t => 
+        t.src.includes('aayega-maza-ab-barsaat-ka') || t.title.toLowerCase().includes('barsaat')
+      );
+      if (barsaatIdx !== -1) {
+        setCurrentTrackIndex(barsaatIdx);
+        setIsPlaying(true);
+        return;
+      }
+    }
+    // If not found in current active playlist, switch to Kishore Kumar Special playlist
+    const kishorePl = MUSIC_PLAYLISTS.find(p => p.id === 'kishore-kumar-special') || MUSIC_PLAYLISTS[0];
+    if (kishorePl) {
+      setActivePlaylist(kishorePl);
+      const idxInKishore = kishorePl.tracks.findIndex(t => 
+        t.src.includes('aayega-maza-ab-barsaat-ka') || t.title.toLowerCase().includes('barsaat')
+      );
+      setCurrentTrackIndex(idxInKishore !== -1 ? idxInKishore : 0);
+      setIsPlaying(true);
+    }
+  };
+
   const toggleRain = () => {
     setIsRainy(prev => {
       const next = !prev;
       showToast(next ? 'MONSOON RAIN ON' : 'CLEAR NIGHT SKY', next ? '🌧' : '🌙', 'Keyboard [R]');
+      if (next) {
+        setTimeout(() => playBarsaatSong(), 50);
+      }
       return next;
     });
   };
