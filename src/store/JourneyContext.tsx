@@ -81,6 +81,10 @@ interface JourneyState {
   isLowSpecMode: boolean;
   setIsLowSpecMode: React.Dispatch<React.SetStateAction<boolean>>;
   toggleLowSpecMode: () => void;
+
+  cabinLighting: 'GOLD' | 'MOONLIGHT' | 'CYBER' | 'EMERALD';
+  setCabinLighting: (mode: 'GOLD' | 'MOONLIGHT' | 'CYBER' | 'EMERALD') => void;
+  cycleCabinLighting: () => void;
   
   ambientVolumes: {
     engine: number;
@@ -126,6 +130,22 @@ export function JourneyProvider({ children }: { children: ReactNode }) {
       document.documentElement.classList.remove('low-spec-mode');
     }
   }, [isLowSpecMode]);
+
+  const [cabinLighting, setCabinLighting] = useState<'GOLD' | 'MOONLIGHT' | 'CYBER' | 'EMERALD'>('GOLD');
+
+  const cycleCabinLighting = () => {
+    const modes: ('GOLD' | 'MOONLIGHT' | 'CYBER' | 'EMERALD')[] = ['GOLD', 'MOONLIGHT', 'CYBER', 'EMERALD'];
+    const nextIdx = (modes.indexOf(cabinLighting) + 1) % modes.length;
+    const newMode = modes[nextIdx];
+    setCabinLighting(newMode);
+    const labels = {
+      GOLD: 'AMBER GOLD CABIN 💡',
+      MOONLIGHT: 'MOONLIGHT BLUE CABIN 🌙',
+      CYBER: 'CYBER NEON CABIN 💜',
+      EMERALD: 'EMERALD MIST CABIN 🌲'
+    };
+    showToast(labels[newMode], '🎨', 'Mood Lighting');
+  };
 
   const toggleLowSpecMode = () => {
     setIsLowSpecMode(prev => !prev);
@@ -471,6 +491,7 @@ export function JourneyProvider({ children }: { children: ReactNode }) {
       showShortcutsModal, setShowShortcutsModal,
       isZenMode, setIsZenMode, toggleZenMode,
       isLowSpecMode, setIsLowSpecMode, toggleLowSpecMode,
+      cabinLighting, setCabinLighting, cycleCabinLighting,
       ambientVolumes
     }}>
       {children}

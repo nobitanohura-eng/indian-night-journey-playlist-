@@ -6,9 +6,16 @@ import { HighwayScenery } from '../effects/HighwayScenery';
 import { CanvasRainLayer } from '../effects/CanvasRainLayer';
 
 export function WindowView() {
-  const { isRainy } = useJourney();
+  const { isRainy, cabinLighting } = useJourney();
   const [isPhoneOpen, setIsPhoneOpen] = useState(false);
   const [showIntro, setShowIntro] = useState(true);
+
+  // Dynamic Cabin Mood Lighting Overlay Gradients
+  const cabinMoodGradient = 
+    cabinLighting === 'MOONLIGHT' ? 'from-indigo-950/35 via-transparent to-blue-500/20' :
+    cabinLighting === 'CYBER' ? 'from-fuchsia-950/35 via-transparent to-cyan-400/20' :
+    cabinLighting === 'EMERALD' ? 'from-emerald-950/35 via-transparent to-teal-400/20' :
+    'from-amber-950/25 via-transparent to-amber-400/15'; // Default GOLD
 
   useEffect(() => {
     const introTimer = setTimeout(() => setShowIntro(false), 4200);
@@ -45,9 +52,9 @@ export function WindowView() {
           style={{ backgroundImage: "url('/window-seat.png')" }}
         />
 
-        {/* 3. Window Glass Atmospheric Reflection */}
+        {/* 3. VIP Cabin Ambient Mood Lighting Layer */}
         <div 
-          className="absolute inset-0 bg-gradient-to-tr from-cyan-950/15 via-transparent to-amber-100/10 pointer-events-none"
+          className={`absolute inset-0 bg-gradient-to-tr ${cabinMoodGradient} transition-all duration-700 pointer-events-none mix-blend-screen`}
           style={{ 
             maskImage: 'radial-gradient(ellipse at 48% 46%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 55%, rgba(0,0,0,0) 90%)',
             WebkitMaskImage: 'radial-gradient(ellipse at 48% 46%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 55%, rgba(0,0,0,0) 90%)'

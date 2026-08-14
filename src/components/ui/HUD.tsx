@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useJourney } from '../../store/JourneyContext';
-import { CloudRain, Moon, Info, Eye, EyeOff, Keyboard, Zap, Maximize, Minimize } from 'lucide-react';
+import { CloudRain, Moon, Info, Eye, EyeOff, Keyboard, Zap, Maximize, Minimize, Palette } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ViewMode } from '../../types';
 import { MusicPlayer } from '../MusicPlayer';
@@ -18,6 +18,8 @@ export function HUD() {
     setIsZenMode,
     isLowSpecMode,
     toggleLowSpecMode,
+    cabinLighting,
+    cycleCabinLighting,
     setShowShortcutsModal 
   } = useJourney();
   const [time, setTime] = useState('');
@@ -155,6 +157,19 @@ export function HUD() {
                 {time}
               </span>
             </div>
+
+            {/* VIP CABIN AMBIENT MOOD LIGHTING TOGGLE */}
+            <button
+              onClick={cycleCabinLighting}
+              aria-label="Cycle VIP Cabin Mood Lighting (Amber Gold / Moonlight Blue / Cyber Neon / Emerald Mist)"
+              className="p-1 sm:px-2.5 sm:py-1 rounded-full border transition-all flex items-center gap-1 text-[8.5px] sm:text-[9.5px] font-mono uppercase tracking-wider active:scale-95 shadow-md bg-black/50 backdrop-blur-md text-cyan-300 hover:text-cyan-200 border-cyan-500/40 hover:border-cyan-400"
+              title="Cycle VIP Cabin Ambient Mood Lighting"
+            >
+              <Palette className="w-3 h-3 text-cyan-400" />
+              <span className="font-bold">
+                {cabinLighting}
+              </span>
+            </button>
 
             {/* PERFORMANCE / LITE MODE TOGGLE FOR LOW END PCS */}
             <button
