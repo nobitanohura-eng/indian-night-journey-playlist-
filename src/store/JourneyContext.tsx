@@ -483,6 +483,9 @@ export function JourneyProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // Ref to ensure rain auto-play triggers ONLY on first time rain turns ON
+  const hasTriggeredFirstRainRef = useRef(false);
+
   const playBarsaatSong = () => {
     if (activePlaylist) {
       const barsaatIdx = activePlaylist.tracks.findIndex(t => 
@@ -494,14 +497,14 @@ export function JourneyProvider({ children }: { children: ReactNode }) {
         return;
       }
     }
-    // If not found in current active playlist, switch to Kishore Kumar Special playlist
-    const kishorePl = MUSIC_PLAYLISTS.find(p => p.id === 'kishore-kumar-special') || MUSIC_PLAYLISTS[0];
-    if (kishorePl) {
-      setActivePlaylist(kishorePl);
-      const idxInKishore = kishorePl.tracks.findIndex(t => 
-        t.src.includes('aayega-maza-ab-barsaat-ka') || t.title.toLowerCase().includes('barsaat')
+    // Fallback: Select a romantic monsoon melody from Kishore / Romantic playlist
+    const rainPl = MUSIC_PLAYLISTS.find(p => p.id === 'kishore-kumar-special') || MUSIC_PLAYLISTS[0];
+    if (rainPl) {
+      setActivePlaylist(rainPl);
+      const idxInRainPl = rainPl.tracks.findIndex(t => 
+        t.src.includes('aayega-maza-ab-barsaat-ka') || t.src.includes('chand-se-parda') || t.src.includes('ae-kash-ke-hum')
       );
-      setCurrentTrackIndex(idxInKishore !== -1 ? idxInKishore : 0);
+      setCurrentTrackIndex(idxInRainPl !== -1 ? idxInRainPl : 0);
       setIsPlaying(true);
     }
   };
@@ -510,7 +513,9 @@ export function JourneyProvider({ children }: { children: ReactNode }) {
     setIsRainy(prev => {
       const next = !prev;
       showToast(next ? 'MONSOON RAIN ON' : 'CLEAR NIGHT SKY', next ? '🌧' : '🌙', 'Keyboard [R]');
-      if (next) {
+      // Trigger rain song ONLY on the 1st time rain turns ON
+      if (next && !hasTriggeredFirstRainRef.current) {
+        hasTriggeredFirstRainRef.current = true;
         setTimeout(() => playBarsaatSong(), 50);
       }
       return next;
