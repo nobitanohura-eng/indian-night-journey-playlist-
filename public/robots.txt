@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://indian-night-journey-playlist.vercel.app/sitemap.xml
