@@ -81,9 +81,11 @@ export function PwaInstallPrompt() {
       >
         <div className="flex items-start justify-between gap-2 border-b border-white/10 pb-2">
           <div className="flex items-center space-x-2.5">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 font-bold shrink-0 shadow-inner text-base">
-              🚌
-            </div>
+            <img 
+              src="/app-icon.svg" 
+              alt="Night Journey App Icon" 
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-amber-500/50 shadow-md shrink-0 object-cover" 
+            />
             <div className="flex flex-col">
               <span className="text-[10px] sm:text-xs font-mono font-bold text-white/95 uppercase tracking-wider">
                 INSTALL NIGHT JOURNEY APP
