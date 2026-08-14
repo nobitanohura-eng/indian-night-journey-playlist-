@@ -10,10 +10,21 @@ export function PwaInstallPrompt() {
   const [isIos, setIsIos] = useState(false);
 
   useEffect(() => {
-    // Check if user already installed or dismissed prompt recently
+    // 1. Check if already running inside installed PWA Standalone Mode
+    const isStandalone = 
+      window.matchMedia('(display-mode: standalone)').matches ||
+      (window.navigator as any).standalone === true ||
+      document.referrer.includes('android-app://');
+
+    // 2. Check localStorage for completed installation
+    const isInstalled = localStorage.getItem('inj_pwa_installed') === 'true';
+
+    // 3. Check dismissal state
     const dismissed = localStorage.getItem('inj_pwa_dismissed');
-    if (dismissed && Date.now() - parseInt(dismissed) < 86400000 * 3) {
-      return; // Suppress for 3 days after dismissal
+    const isRecentlyDismissed = dismissed && Date.now() - parseInt(dismissed) < 86400000 * 3;
+
+    if (isStandalone || isInstalled || isRecentlyDismissed) {
+      return; // Do NOT show install suggestion to installed app users!
     }
 
     // Detect iOS
@@ -26,7 +37,13 @@ export function PwaInstallPrompt() {
       setDeferredPrompt(e);
     };
 
+    const handleAppInstalled = () => {
+      localStorage.setItem('inj_pwa_installed', 'true');
+      setShowPrompt(false);
+    };
+
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('appinstalled', handleAppInstalled);
 
     // Show prompt after 8 seconds of engagement
     const timer = setTimeout(() => {
@@ -35,6 +52,7 @@ export function PwaInstallPrompt() {
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('appinstalled', handleAppInstalled);
       clearTimeout(timer);
     };
   }, []);
@@ -46,6 +64,7 @@ export function PwaInstallPrompt() {
         promptEvent.prompt();
         const choiceResult = await promptEvent.userChoice;
         if (choiceResult?.outcome === 'accepted') {
+          localStorage.setItem('inj_pwa_installed', 'true');
           setShowPrompt(false);
         }
       } catch (err) {
