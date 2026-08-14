@@ -20,8 +20,18 @@ export function MusicPlayer() {
   const [showSelector, setShowSelector] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [isBuffering, setIsBuffering] = useState(false);
-  const [hasError, setHasError] = useState(false);
+  const [isLofiMode, setIsLofiMode] = useState(false);
+
+  // Apply Lo-Fi Slowed + Reverb playbackRate
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.playbackRate = isLofiMode ? 0.88 : 1.0;
+    }
+  }, [isLofiMode, currentTrackIndex, isPlaying]);
+
+  const toggleLofiMode = () => {
+    setIsLofiMode(prev => !prev);
+  };
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const nextPreloaderRef = useRef<HTMLAudioElement | null>(null);
@@ -252,21 +262,43 @@ export function MusicPlayer() {
             onClick={() => setShowSelector(true)}
             className="flex-1 min-w-0 cursor-pointer flex flex-col justify-center select-none"
           >
-            <div className="text-[10px] sm:text-xs font-mono font-bold text-white/90 truncate flex items-center gap-1">
+            <div className="text-[10px] sm:text-xs font-mono font-bold text-white/90 truncate flex items-center gap-1.5">
               {isBuffering ? (
                 <span className="text-amber-400 animate-pulse text-[9px] sm:text-[10px]">BUFFERING...</span>
-              ) : hasError ? (
-                <span className="text-amber-400/90 text-[9px] sm:text-[10px] truncate">{currentTrack.title}</span>
               ) : (
-                <span>{currentTrack.title}</span>
+                <>
+                  <span className="truncate">{currentTrack.title}</span>
+                  {/* Live Animated Equalizer Bars when playing */}
+                  {isPlaying && (
+                    <div className="flex items-end gap-[1.5px] h-2.5 shrink-0">
+                      <span className="w-[2px] bg-amber-400 h-2 animate-bounce" style={{ animationDuration: '0.6s' }} />
+                      <span className="w-[2px] bg-amber-300 h-3 animate-bounce" style={{ animationDuration: '0.4s' }} />
+                      <span className="w-[2px] bg-amber-400 h-1.5 animate-bounce" style={{ animationDuration: '0.8s' }} />
+                    </div>
+                  )}
+                </>
               )}
             </div>
             <div className="text-[8px] sm:text-[9.5px] font-mono text-white/50 truncate flex items-center gap-1">
               <span>{currentTrack.artist}</span>
               <span className="text-amber-400/60">•</span>
-              <span className="text-amber-400/80">{activePlaylist.name}</span>
+              <span className="text-amber-400/80">{isLofiMode ? 'LO-FI REVERB' : activePlaylist.name}</span>
             </div>
           </div>
+
+          {/* LO-FI SLOWED + REVERB TOGGLE BUTTON */}
+          <button
+            onClick={toggleLofiMode}
+            aria-label="Toggle Slowed and Reverb Lofi Mode"
+            className={`px-1.5 sm:px-2 py-0.5 rounded-full text-[7.5px] sm:text-[8.5px] font-mono font-bold uppercase tracking-wider transition-all duration-200 shrink-0 border ${
+              isLofiMode
+                ? 'bg-amber-400 text-black border-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.5)] font-extrabold scale-105'
+                : 'bg-white/10 hover:bg-white/20 text-white/70 border-white/20'
+            }`}
+            title="Toggle Slowed + Reverb 90s Lo-Fi Effect"
+          >
+            {isLofiMode ? '🎧 LOFI ON' : '🎧 LOFI'}
+          </button>
 
           {/* Audio Controls */}
           <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">

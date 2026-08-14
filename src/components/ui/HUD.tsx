@@ -25,12 +25,27 @@ export function HUD() {
 
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showFullscreenPrompt, setShowFullscreenPrompt] = useState(false);
+  const [showRainPrompt, setShowRainPrompt] = useState(false);
 
   useEffect(() => {
     // Reveal Fullscreen Button after 3.5 seconds
     const timer = setTimeout(() => setShowFullscreenPrompt(true), 3500);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (!isRainy) {
+      const timer = setTimeout(() => setShowRainPrompt(true), 4500);
+      return () => clearTimeout(timer);
+    } else {
+      setShowRainPrompt(false);
+    }
+  }, [isRainy]);
+
+  const handleEnableRainFromPrompt = () => {
+    if (!isRainy) toggleRain();
+    setShowRainPrompt(false);
+  };
 
   useEffect(() => {
     const handleFsChange = () => {
@@ -185,6 +200,36 @@ export function HUD() {
           </div>
 
         </div>
+
+        {/* INTERACTIVE RAIN INSTRUCTION BANNER (Reveals 4.5s after load) */}
+        <AnimatePresence>
+          {showRainPrompt && !isRainy && !isZenMode && (
+            <motion.div
+              initial={{ opacity: 0, y: -15, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -15, scale: 0.95 }}
+              transition={{ duration: 0.4, ease: 'easeOut' }}
+              className="absolute top-[48px] sm:top-[54px] left-1/2 -translate-x-1/2 z-50 pointer-events-auto flex items-center gap-2 px-3 py-1.5 bg-black/90 backdrop-blur-2xl border border-cyan-400/60 rounded-full shadow-[0_0_20px_rgba(6,182,212,0.5)]"
+            >
+              <CloudRain className="w-4 h-4 text-cyan-300 animate-bounce shrink-0" />
+              <span className="text-[9.5px] sm:text-xs font-mono font-bold text-white/95 whitespace-nowrap">
+                🌧️ Try turning on Monsoon Rain!
+              </span>
+              <button
+                onClick={handleEnableRainFromPrompt}
+                className="px-2.5 py-1 bg-cyan-400 hover:bg-cyan-300 text-black font-mono font-bold text-[8.5px] sm:text-[9.5px] uppercase tracking-wider rounded-full shadow-md active:scale-95 transition-all whitespace-nowrap"
+              >
+                TURN ON RAIN 🌧️
+              </button>
+              <button
+                onClick={() => setShowRainPrompt(false)}
+                className="text-white/40 hover:text-white text-xs px-1"
+              >
+                ✕
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Mobile Portrait Sub-Row: Centered Journey Progress */}
         <div className="flex md:hidden justify-center w-full pointer-events-auto pt-0.5">
