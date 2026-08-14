@@ -19,7 +19,7 @@ export function HighwayScenery({ view }: { view: 'WINDOW' | 'DRIVER' | 'LAST_SEA
         <motion.div 
           animate={{ x: ['0%', '-50%'] }}
           transition={{ duration: 120, repeat: Infinity, ease: 'linear' }}
-          className="absolute top-0 left-0 w-[200%] h-full opacity-15 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-600 via-transparent to-transparent blur-2xl"
+          className="absolute top-0 left-0 w-[200%] h-full opacity-15 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-600 via-transparent to-transparent blur-2xl transform-gpu will-change-transform"
         />
       </div>
 
@@ -44,7 +44,7 @@ export function HighwayScenery({ view }: { view: 'WINDOW' | 'DRIVER' | 'LAST_SEA
             ease: 'linear',
           }}
           style={{ top: `${car.top}%` }}
-          className="absolute flex items-center gap-3 sm:gap-4 pointer-events-none"
+          className="absolute flex items-center gap-3 sm:gap-4 pointer-events-none transform-gpu will-change-transform"
         >
           <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-white/90 blur-[1.5px] shadow-[0_0_25px_10px_rgba(255,255,255,0.4)]" />
           <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-white/90 blur-[1.5px] shadow-[0_0_25px_10px_rgba(255,255,255,0.4)]" />

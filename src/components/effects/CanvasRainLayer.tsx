@@ -64,8 +64,14 @@ export function CanvasRainLayer() {
     };
     window.addEventListener('resize', handleResize);
 
+    const isMobile = window.innerWidth < 768;
+    const STREAK_COUNT = isMobile ? 45 : 90;
+    const INITIAL_STATIC_COUNT = isMobile ? 90 : 200;
+    const INITIAL_DRIP_COUNT = isMobile ? 6 : 14;
+    const MAX_DROPLETS = isMobile ? 130 : 260;
+
     // Fast-falling rain streaks outside the window glass
-    const streaks: RainStreak[] = Array.from({ length: 140 }, () => ({
+    const streaks: RainStreak[] = Array.from({ length: STREAK_COUNT }, () => ({
       x: Math.random() * width * 1.4,
       y: Math.random() * height,
       len: 30 + Math.random() * 45,
@@ -126,10 +132,6 @@ export function CanvasRainLayer() {
         angle: 0.08,
       });
     };
-
-    // Initialize clean population of droplets on glass
-    const INITIAL_STATIC_COUNT = 280;
-    const INITIAL_DRIP_COUNT = 18;
 
     for (let i = 0; i < INITIAL_STATIC_COUNT; i++) {
       spawnStaticDroplet();

@@ -47,7 +47,7 @@ export function PassingLights() {
         return (
           <div
             key={light.id}
-            className={`absolute rounded-full blur-[2px] animate-pass-light ${colorClass}`}
+            className={`absolute rounded-full blur-[2px] animate-pass-light transform-gpu will-change-transform ${colorClass}`}
             style={{
               top: `${light.top}%`,
               right: '-20%', // Start off screen right

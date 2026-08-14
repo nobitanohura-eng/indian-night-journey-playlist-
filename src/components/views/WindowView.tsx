@@ -41,7 +41,7 @@ export function WindowView() {
         <motion.div 
           animate={{ scale: [1.015, 1.035, 1.015], x: ['0%', '-0.4%', '0%'] }}
           transition={{ duration: 25, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute inset-0 bg-cover bg-center opacity-100 origin-center pointer-events-none"
+          className="absolute inset-0 bg-cover bg-center opacity-100 origin-center pointer-events-none transform-gpu will-change-transform"
           style={{ backgroundImage: "url('/window-seat.png')" }}
         />
 

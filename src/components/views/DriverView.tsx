@@ -42,7 +42,7 @@ export function DriverView() {
         <motion.div 
           animate={{ scale: [1.015, 1.035, 1.015], y: ['0%', '0.4%', '0%'] }}
           transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute inset-0 bg-cover bg-center opacity-100 origin-center pointer-events-none z-5"
+          className="absolute inset-0 bg-cover bg-center opacity-100 origin-center pointer-events-none z-5 transform-gpu will-change-transform"
           style={{ backgroundImage: "url('/driver-seat.png')" }}
         />
 

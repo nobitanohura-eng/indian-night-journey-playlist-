@@ -27,7 +27,7 @@ export function LastSeatView() {
         <motion.div 
           animate={{ scale: [1.02, 1.05, 1.02], y: ['0%', '1%', '0%'] }}
           transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute inset-0 bg-cover bg-center opacity-100 origin-center pointer-events-none"
+          className="absolute inset-0 bg-cover bg-center opacity-100 origin-center pointer-events-none transform-gpu will-change-transform"
           style={{ backgroundImage: "url('/last-seat.png')" }}
         />
         
