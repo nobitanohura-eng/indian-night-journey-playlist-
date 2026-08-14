@@ -9,7 +9,7 @@ export function BoardingTransition() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setAppState('JOURNEY');
-    }, 2400);
+    }, 1600);
     return () => clearTimeout(timer);
   }, [setAppState]);
 

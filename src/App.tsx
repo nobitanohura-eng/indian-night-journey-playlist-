@@ -17,7 +17,7 @@ function AppContent() {
 
   return (
     <div className="w-full h-[100dvh] overflow-hidden bg-black text-white">
-      <AnimatePresence mode="wait">
+      <AnimatePresence>
         {appState === 'SPLASH' && <SplashScreen key="splash" />}
         {appState === 'SELECTION' && <JourneySelection key="selection" />}
         {appState === 'TICKET' && <VirtualTicket key="ticket" />}

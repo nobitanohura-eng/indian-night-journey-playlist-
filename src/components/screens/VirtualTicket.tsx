@@ -122,8 +122,8 @@ export function VirtualTicket() {
             key="ticket-wrapper"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0, scale: 0.95, filter: 'blur(10px)' }}
-            transition={{ duration: 1.2, ease: "easeInOut" }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
             className="relative w-full min-h-full flex flex-col items-center justify-center z-10 py-4 sm:py-10 landscape:py-4"
           >
             <motion.div 
