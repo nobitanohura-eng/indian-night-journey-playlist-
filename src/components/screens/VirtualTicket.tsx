@@ -43,24 +43,48 @@ export function VirtualTicket() {
   };
 
   const handleShare = async () => {
-    if (!ticket) return;
-    const shareText = `I've booked a night journey from ${ticket.route.from} to ${ticket.route.to}.`;
+    if (!ticket || !ticketRef.current) return;
+
+    const shareText = `🎫 My Bus Ticket: ${ticket.route.from} ➔ ${ticket.route.to}\nSleeper Seat: ${ticket.seat} | PNR: ${ticket.pnr}\nTake this 90s night bus journey with me:`;
     const shareUrl = `${window.location.origin}?shared=true&from=${encodeURIComponent(ticket.route.from)}&to=${encodeURIComponent(ticket.route.to)}&pnr=${ticket.pnr}&seat=${ticket.seat}`;
 
-    if (navigator.share) {
-      try {
+    try {
+      // 1. Generate high-quality PNG image blob from ticket DOM
+      const dataUrl = await toPng(ticketRef.current, {
+        cacheBust: true,
+        pixelRatio: 2,
+        backgroundColor: '#0a0806'
+      });
+
+      const res = await fetch(dataUrl);
+      const blob = await res.blob();
+      const imageFile = new File([blob], `Bus_Ticket_${ticket.pnr}.png`, { type: 'image/png' });
+
+      // 2. Share Image + Link natively via Web Share API (WhatsApp/Instagram/Telegram)
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [imageFile] })) {
+        await navigator.share({
+          title: 'Indian Night Journey 🎟️',
+          text: `${shareText}\n${shareUrl}`,
+          files: [imageFile],
+        });
+        return;
+      }
+
+      if (navigator.share) {
         await navigator.share({
           title: 'Indian Night Journey 🎟️',
           text: shareText,
           url: shareUrl,
         });
-      } catch (err) {
-        console.log('Error sharing:', err);
+        return;
       }
-    } else {
-      navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
-      alert('Journey link copied to clipboard!');
+    } catch (err) {
+      console.log('Image share fallback:', err);
     }
+
+    // 3. Fallback: Direct WhatsApp Share
+    const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(`${shareText}\n${shareUrl}`)}`;
+    window.open(waUrl, '_blank');
   };
 
     const today = new Date();
