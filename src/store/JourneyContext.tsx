@@ -487,24 +487,14 @@ export function JourneyProvider({ children }: { children: ReactNode }) {
   const hasTriggeredFirstRainRef = useRef(false);
 
   const playBarsaatSong = () => {
-    if (activePlaylist) {
-      const barsaatIdx = activePlaylist.tracks.findIndex(t => 
+    // Target Kishore Kumar Special playlist where Aayega Maza Ab Barsaat Ka is track 0
+    const kishorePl = MUSIC_PLAYLISTS.find(p => p.id === 'kishore-kumar-special') || MUSIC_PLAYLISTS[0];
+    if (kishorePl) {
+      const barsaatIdx = kishorePl.tracks.findIndex(t => 
         t.src.includes('aayega-maza-ab-barsaat-ka') || t.title.toLowerCase().includes('barsaat')
       );
-      if (barsaatIdx !== -1) {
-        setCurrentTrackIndex(barsaatIdx);
-        setIsPlaying(true);
-        return;
-      }
-    }
-    // Fallback: Select a romantic monsoon melody from Kishore / Romantic playlist
-    const rainPl = MUSIC_PLAYLISTS.find(p => p.id === 'kishore-kumar-special') || MUSIC_PLAYLISTS[0];
-    if (rainPl) {
-      setActivePlaylist(rainPl);
-      const idxInRainPl = rainPl.tracks.findIndex(t => 
-        t.src.includes('aayega-maza-ab-barsaat-ka') || t.src.includes('chand-se-parda') || t.src.includes('ae-kash-ke-hum')
-      );
-      setCurrentTrackIndex(idxInRainPl !== -1 ? idxInRainPl : 0);
+      setActivePlaylist(kishorePl);
+      setCurrentTrackIndex(barsaatIdx !== -1 ? barsaatIdx : 0);
       setIsPlaying(true);
     }
   };
