@@ -78,6 +78,10 @@ interface JourneyState {
   setIsZenMode: React.Dispatch<React.SetStateAction<boolean>>;
   toggleZenMode: () => void;
   
+  isLowSpecMode: boolean;
+  setIsLowSpecMode: React.Dispatch<React.SetStateAction<boolean>>;
+  toggleLowSpecMode: () => void;
+  
   ambientVolumes: {
     engine: number;
     rain: number;
@@ -107,6 +111,25 @@ export function JourneyProvider({ children }: { children: ReactNode }) {
   const [hotkeyToast, setHotkeyToast] = useState<HotkeyToast | null>(null);
   const [showShortcutsModal, setShowShortcutsModal] = useState(false);
   const [isZenMode, setIsZenMode] = useState(false);
+
+  const [isLowSpecMode, setIsLowSpecMode] = useState(() => {
+    const saved = localStorage.getItem('inj_low_spec');
+    if (saved !== null) return saved === 'true';
+    return (typeof navigator !== 'undefined' && navigator.hardwareConcurrency ? navigator.hardwareConcurrency <= 4 : false);
+  });
+
+  useEffect(() => {
+    localStorage.setItem('inj_low_spec', String(isLowSpecMode));
+    if (isLowSpecMode) {
+      document.documentElement.classList.add('low-spec-mode');
+    } else {
+      document.documentElement.classList.remove('low-spec-mode');
+    }
+  }, [isLowSpecMode]);
+
+  const toggleLowSpecMode = () => {
+    setIsLowSpecMode(prev => !prev);
+  };
 
   const [isSharedView, setIsSharedView] = useState(false);
   
@@ -432,6 +455,7 @@ export function JourneyProvider({ children }: { children: ReactNode }) {
       hotkeyToast,
       showShortcutsModal, setShowShortcutsModal,
       isZenMode, setIsZenMode, toggleZenMode,
+      isLowSpecMode, setIsLowSpecMode, toggleLowSpecMode,
       ambientVolumes
     }}>
       {children}

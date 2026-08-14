@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { useJourney } from '../../store/JourneyContext';
 
 interface Droplet {
   id: number;
@@ -45,6 +46,7 @@ interface WipeTrack {
 }
 
 export function CanvasRainLayer() {
+  const { isLowSpecMode } = useJourney();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wipeTracksRef = useRef<WipeTrack[]>([]);
   const isInteractingRef = useRef<boolean>(false);
@@ -65,10 +67,10 @@ export function CanvasRainLayer() {
     window.addEventListener('resize', handleResize);
 
     const isMobile = window.innerWidth < 768;
-    const STREAK_COUNT = isMobile ? 45 : 90;
-    const INITIAL_STATIC_COUNT = isMobile ? 90 : 200;
-    const INITIAL_DRIP_COUNT = isMobile ? 6 : 14;
-    const MAX_DROPLETS = isMobile ? 130 : 260;
+    const STREAK_COUNT = isLowSpecMode ? 15 : (isMobile ? 35 : 80);
+    const INITIAL_STATIC_COUNT = isLowSpecMode ? 35 : (isMobile ? 70 : 160);
+    const INITIAL_DRIP_COUNT = isLowSpecMode ? 3 : (isMobile ? 5 : 12);
+    const MAX_DROPLETS = isLowSpecMode ? 55 : (isMobile ? 110 : 220);
 
     // Fast-falling rain streaks outside the window glass
     const streaks: RainStreak[] = Array.from({ length: STREAK_COUNT }, () => ({

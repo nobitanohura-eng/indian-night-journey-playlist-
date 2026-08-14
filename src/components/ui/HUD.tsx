@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useJourney } from '../../store/JourneyContext';
-import { CloudRain, Moon, Info, Eye, EyeOff, Keyboard } from 'lucide-react';
+import { CloudRain, Moon, Info, Eye, EyeOff, Keyboard, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ViewMode } from '../../types';
 import { MusicPlayer } from '../MusicPlayer';
@@ -16,6 +16,8 @@ export function HUD() {
     toggleRain,
     isZenMode, 
     setIsZenMode,
+    isLowSpecMode,
+    toggleLowSpecMode,
     setShowShortcutsModal 
   } = useJourney();
   const [time, setTime] = useState('');
@@ -96,6 +98,23 @@ export function HUD() {
                 {time}
               </span>
             </div>
+
+            {/* PERFORMANCE / LITE MODE TOGGLE FOR LOW END PCS */}
+            <button
+              onClick={toggleLowSpecMode}
+              aria-label="Toggle High Performance Lite Mode for Weak PCs"
+              className={`p-1 sm:px-2.5 sm:py-1 rounded-full border transition-all flex items-center gap-1 text-[8.5px] sm:text-[9.5px] font-mono uppercase tracking-wider active:scale-95 shadow-md ${
+                isLowSpecMode 
+                  ? 'bg-emerald-500/30 text-emerald-300 border-emerald-400 font-extrabold shadow-[0_0_12px_rgba(16,185,129,0.5)]' 
+                  : 'bg-black/50 backdrop-blur-md text-amber-300/80 hover:text-amber-300 border-amber-500/30 hover:border-amber-400/60'
+              }`}
+              title="Toggle Lite Mode (Instant Speed Boost for Weak PCs / Laptops)"
+            >
+              <Zap className={`w-3 h-3 ${isLowSpecMode ? 'text-emerald-400 fill-emerald-400 animate-pulse' : 'text-amber-400'}`} />
+              <span className="font-bold">
+                {isLowSpecMode ? '⚡ LITE MODE: ON' : '⚡ LITE MODE'}
+              </span>
+            </button>
 
             {/* Keyboard Shortcuts Trigger */}
             <button
