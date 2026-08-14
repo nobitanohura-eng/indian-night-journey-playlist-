@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useJourney } from '../../store/JourneyContext';
-import { CloudRain, Moon, Info, Eye, EyeOff, Keyboard, Zap } from 'lucide-react';
+import { CloudRain, Moon, Info, Eye, EyeOff, Keyboard, Zap, Maximize, Minimize } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ViewMode } from '../../types';
 import { MusicPlayer } from '../MusicPlayer';
@@ -22,6 +22,48 @@ export function HUD() {
   } = useJourney();
   const [time, setTime] = useState('');
   const [showRouteInfo, setShowRouteInfo] = useState(false);
+
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showFullscreenPrompt, setShowFullscreenPrompt] = useState(false);
+
+  useEffect(() => {
+    // Reveal Fullscreen Button after 3.5 seconds
+    const timer = setTimeout(() => setShowFullscreenPrompt(true), 3500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const handleFsChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFsChange);
+    document.addEventListener('webkitfullscreenchange', handleFsChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFsChange);
+      document.removeEventListener('webkitfullscreenchange', handleFsChange);
+    };
+  }, []);
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      const docEl = document.documentElement as HTMLElement & {
+        webkitRequestFullscreen?: () => Promise<void>;
+        mozRequestFullScreen?: () => Promise<void>;
+        msRequestFullscreen?: () => Promise<void>;
+      };
+      if (docEl.requestFullscreen) {
+        docEl.requestFullscreen().catch(() => {});
+      } else if (docEl.webkitRequestFullscreen) {
+        docEl.webkitRequestFullscreen();
+      } else if (docEl.msRequestFullscreen) {
+        docEl.msRequestFullscreen();
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+  };
 
   useEffect(() => {
     const updateTime = () => {
@@ -224,8 +266,43 @@ export function HUD() {
           <MusicPlayer />
         </div>
 
-        {/* Bottom Right / Center: View Switcher Capsule */}
-        <div className="pointer-events-auto flex items-center justify-center gap-0.5 bg-black/60 hover:bg-black/80 backdrop-blur-xl p-0.5 sm:p-1 rounded-full border border-white/15 shadow-[0_4px_20px_rgba(0,0,0,0.6)] shrink-0">
+        {/* Bottom Right / Center: View Switcher Capsule & Fullscreen Prompt */}
+        <div className="pointer-events-auto flex items-center justify-center gap-1.5 shrink-0">
+          
+          {/* FULLSCREEN TOGGLE BUTTON (Reveals 3.5s after load) */}
+          <AnimatePresence>
+            {showFullscreenPrompt && (
+              <motion.button
+                initial={{ opacity: 0, scale: 0.8, x: 10 }}
+                animate={{ opacity: 1, scale: 1, x: 0 }}
+                exit={{ opacity: 0, scale: 0.8, x: 10 }}
+                transition={{ duration: 0.4 }}
+                onClick={toggleFullscreen}
+                aria-label={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen Mode (Key: F)"}
+                className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full backdrop-blur-xl border transition-all duration-200 text-[9px] sm:text-[10px] md:text-xs font-mono font-bold active:scale-95 shadow-xl ${
+                  isFullscreen 
+                    ? 'bg-black/70 text-white/70 border-white/20 hover:text-white hover:bg-black/90' 
+                    : 'bg-amber-500 hover:bg-amber-400 text-black border-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.5)] animate-pulse'
+                }`}
+                title="Toggle Fullscreen Mode [Key: F]"
+              >
+                {isFullscreen ? (
+                  <Minimize className="w-3.5 h-3.5 text-white" />
+                ) : (
+                  <Maximize className="w-3.5 h-3.5 text-black" />
+                )}
+                <span className="uppercase tracking-wider whitespace-nowrap font-bold">
+                  {isFullscreen ? 'EXIT' : 'FULLSCREEN'}
+                </span>
+                <kbd className={`text-[7.5px] px-1 py-0.2 rounded border hidden lg:inline ${isFullscreen ? 'bg-white/10 border-white/20 text-white/40' : 'bg-black/20 border-black/30 text-black'}`}>
+                  F
+                </kbd>
+              </motion.button>
+            )}
+          </AnimatePresence>
+
+          {/* View Switcher Capsule */}
+          <div className="flex items-center justify-center gap-0.5 bg-black/60 hover:bg-black/80 backdrop-blur-xl p-0.5 sm:p-1 rounded-full border border-white/15 shadow-[0_4px_20px_rgba(0,0,0,0.6)] shrink-0">
           {[
             { id: 'WINDOW' as ViewMode, icon: '🪟', label: 'WINDOW', fullLabel: 'WINDOW SEAT', keyHint: '1' },
             { id: 'DRIVER' as ViewMode, icon: '🛞', label: 'DRIVER', fullLabel: 'DRIVER CABIN', keyHint: '2' },
@@ -252,6 +329,7 @@ export function HUD() {
               </kbd>
             </button>
           ))}
+        </div>
         </div>
 
       </motion.div>

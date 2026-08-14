@@ -404,6 +404,21 @@ export function JourneyProvider({ children }: { children: ReactNode }) {
         return;
       }
 
+      // 9. F: Fullscreen Toggle
+      if (e.code === 'KeyF' || e.key.toLowerCase() === 'f') {
+        e.preventDefault();
+        if (!document.fullscreenElement) {
+          const docEl = document.documentElement as HTMLElement & {
+            webkitRequestFullscreen?: () => Promise<void>;
+          };
+          if (docEl.requestFullscreen) docEl.requestFullscreen().catch(() => {});
+          else if (docEl.webkitRequestFullscreen) docEl.webkitRequestFullscreen();
+        } else {
+          if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+        }
+        return;
+      }
+
       // 9. K or ?: Keyboard Shortcuts Cheat Sheet
       if (e.code === 'KeyK' || e.key.toLowerCase() === 'k' || e.key === '?') {
         e.preventDefault();
