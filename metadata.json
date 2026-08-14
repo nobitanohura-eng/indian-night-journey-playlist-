@@ -4,5 +4,6 @@
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
-  ]
+  ],
+  "lastUpdated": "2026-08-14T13:45:35.332Z"
 }
