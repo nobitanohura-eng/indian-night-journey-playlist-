@@ -40,18 +40,25 @@ export function PwaInstallPrompt() {
   }, []);
 
   const handleInstallClick = async () => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        setShowPrompt(false);
+    const promptEvent = (window as any).deferredPwaPrompt || deferredPrompt;
+    if (promptEvent) {
+      try {
+        promptEvent.prompt();
+        const choiceResult = await promptEvent.userChoice;
+        if (choiceResult?.outcome === 'accepted') {
+          setShowPrompt(false);
+        }
+      } catch (err) {
+        console.log('PWA Install prompt error:', err);
       }
+      (window as any).deferredPwaPrompt = null;
       setDeferredPrompt(null);
+      setShowPrompt(false);
     } else if (isIos) {
       alert('To install on iPhone/iPad:\n1. Tap the Share button in Safari 📤\n2. Scroll down & select "Add to Home Screen" 📲');
       setShowPrompt(false);
     } else {
-      alert('To install as App:\nOpen your browser menu (⋮) and tap "Install app" or "Add to Home screen".');
+      // Fallback
       setShowPrompt(false);
     }
   };
