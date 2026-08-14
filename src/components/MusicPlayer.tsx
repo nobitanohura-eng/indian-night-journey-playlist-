@@ -62,6 +62,7 @@ export function MusicPlayer() {
   }, [activePlaylist, currentTrackIndex]);
 
   // Handle active track change with rapid play
+  // Handle active track change with rapid play & Lockscreen/Background MediaSession API
   useEffect(() => {
     if (activePlaylist && audioRef.current) {
       const track = activePlaylist.tracks[currentTrackIndex];
@@ -72,11 +73,47 @@ export function MusicPlayer() {
           audioRef.current.src = track.src;
           audioRef.current.load();
         }
+
+        // Setup Media Session API for background audio & lock screen controls
+        if ('mediaSession' in navigator) {
+          try {
+            navigator.mediaSession.metadata = new MediaMetadata({
+              title: track.title,
+              artist: track.artist || 'Indian Night Journey',
+              album: activePlaylist.name,
+              artwork: [
+                { src: '/app-icon.svg', sizes: '192x192', type: 'image/svg+xml' },
+                { src: '/H.png', sizes: '512x512', type: 'image/png' }
+              ]
+            });
+
+            navigator.mediaSession.setActionHandler('play', () => {
+              setIsPlaying(true);
+            });
+            navigator.mediaSession.setActionHandler('pause', () => {
+              setIsPlaying(false);
+            });
+            navigator.mediaSession.setActionHandler('previoustrack', () => {
+              prevTrack();
+            });
+            navigator.mediaSession.setActionHandler('nexttrack', () => {
+              nextTrack();
+            });
+          } catch (e) {
+            console.warn('MediaSession API error:', e);
+          }
+        }
+
         if (isPlaying) {
           const playPromise = audioRef.current.play();
           if (playPromise !== undefined) {
             playPromise
-              .then(() => setIsBuffering(false))
+              .then(() => {
+                setIsBuffering(false);
+                if ('mediaSession' in navigator) {
+                  navigator.mediaSession.playbackState = 'playing';
+                }
+              })
               .catch(e => {
                 console.warn("Audio autoplay waiting for user tap:", e);
                 setIsBuffering(false);
@@ -87,7 +124,7 @@ export function MusicPlayer() {
     }
   }, [activePlaylist, currentTrackIndex]);
 
-  // Handle play/pause
+  // Handle play/pause & mediaSession sync
   useEffect(() => {
     if (audioRef.current) {
       if (isPlaying) {
@@ -97,11 +134,18 @@ export function MusicPlayer() {
             audioRef.current.src = track.src;
           }
         }
-        audioRef.current.play().catch(e => {
+        audioRef.current.play().then(() => {
+          if ('mediaSession' in navigator) {
+            navigator.mediaSession.playbackState = 'playing';
+          }
+        }).catch(e => {
           console.warn("Audio play interrupted:", e);
         });
       } else {
         audioRef.current.pause();
+        if ('mediaSession' in navigator) {
+          navigator.mediaSession.playbackState = 'paused';
+        }
       }
     }
   }, [isPlaying]);

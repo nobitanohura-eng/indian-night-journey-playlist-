@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useJourney } from '../../store/JourneyContext';
+import { useJourney, parseDurationMinutes, getRouteDistanceKm } from '../../store/JourneyContext';
 import { JOURNEY_DATA, Region, City, Terminal, Destination } from '../../constants/journeyData';
 import { MapPin, ArrowRight, ArrowLeft } from 'lucide-react';
 
@@ -61,6 +61,9 @@ export function JourneySelection() {
       r.to.toLowerCase() === selectedDestination.name.toLowerCase()
     );
 
+    const durMins = predefined?.durationMinutes || parseDurationMinutes(summaryDetails.duration);
+    const distKm = predefined?.distanceKm || getRouteDistanceKm(selectedCity.name, selectedDestination.name, durMins);
+
     // Create temporary route
     const customRoute = {
       id: predefined ? predefined.id : Math.random().toString(),
@@ -71,7 +74,9 @@ export function JourneySelection() {
       duration: summaryDetails.duration,
       nextStop: predefined ? predefined.nextStop : selectedDestination.name,
       fare: summaryDetails.fare,
-      type: summaryDetails.type
+      type: summaryDetails.type,
+      distanceKm: distKm,
+      durationMinutes: durMins
     };
     
     setActiveRoute(customRoute);

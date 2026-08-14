@@ -4,15 +4,74 @@ import { MUSIC_PLAYLISTS, HORN_TRACKS } from '../constants/audio';
 
 export type AppState = 'SPLASH' | 'SELECTION' | 'TICKET' | 'BOARDING' | 'JOURNEY';
 
+export function parseDurationMinutes(durationStr?: string): number {
+  if (!durationStr) return 180;
+  const hoursMatch = durationStr.match(/(\d+)\s*h/i);
+  const minsMatch = durationStr.match(/(\d+)\s*m/i);
+  const hours = hoursMatch ? parseInt(hoursMatch[1], 10) : 0;
+  const mins = minsMatch ? parseInt(minsMatch[1], 10) : 0;
+  const total = hours * 60 + mins;
+  return total > 0 ? total : 180;
+}
+
+export function getRouteDistanceKm(from?: string, to?: string, durationMinutes?: number): number {
+  if (!from || !to) return 200;
+  const key = `${from.trim().toLowerCase()}-${to.trim().toLowerCase()}`;
+  const reverseKey = `${to.trim().toLowerCase()}-${from.trim().toLowerCase()}`;
+  
+  const knownDistances: Record<string, number> = {
+    'patna-gaya': 118,
+    'patna-ranchi': 330,
+    'patna-muzaffarpur': 75,
+    'patna-bhagalpur': 250,
+    'patna-darbhanga': 140,
+    'patna-siliguri': 470,
+    'gaya-jehanabad': 48,
+    'gaya-nawada': 60,
+    'aurangabad-dehri': 20,
+    'aurangabad-gaya': 75,
+    'delhi-chandigarh': 245,
+    'delhi-shimla': 345,
+    'delhi-manali': 540,
+    'delhi-dehradun': 240,
+    'delhi-lucknow': 530,
+    'delhi-kanpur': 495,
+    'delhi-agra': 210,
+    'mumbai-pune': 150,
+    'mumbai-goa': 590,
+    'mumbai-ahmedabad': 530,
+    'mumbai-kolhapur': 380,
+    'jaipur-delhi': 280,
+    'jaipur-jodhpur': 335,
+    'jaipur-udaipur': 395,
+    'jaipur-ajmer': 135,
+    'lucknow-kanpur': 90,
+    'lucknow-varanasi': 310,
+    'kolkata-siliguri': 560,
+    'kolkata-digha': 185,
+    'kolkata-asansol': 210,
+    'chandigarh-shimla': 112,
+    'pune-mahabaleshwar': 120,
+    'ahmedabad-surat': 265,
+    'ahmedabad-rajkot': 215,
+  };
+
+  if (knownDistances[key]) return knownDistances[key];
+  if (knownDistances[reverseKey]) return knownDistances[reverseKey];
+  
+  const minutes = durationMinutes || 180;
+  return Math.max(25, Math.round(minutes * 0.75));
+}
+
 export const ROUTES: Route[] = [
-  { id: 'delhi-manali', from: 'DELHI', to: 'MANALI', highway: 'NH 44 (Himalayan Rider)', departureTime: '21:30', duration: '12h 00m', nextStop: 'CHANDIGARH', type: 'VOLVO AC SLEEPER' },
-  { id: 'mumbai-goa', from: 'MUMBAI', to: 'GOA', highway: 'NH 66 (Konkan Highway)', departureTime: '20:45', duration: '11h 30m', nextStop: 'CHIPLUN', type: 'DELUXE SLEEPER' },
-  { id: 'bangalore-ooty', from: 'BANGALORE', to: 'OOTY', highway: 'NH 275 (Nilgiri Ghats)', departureTime: '22:15', duration: '07h 45m', nextStop: 'MYSORE', type: 'NIGHT EXPRESS' },
-  { id: 'jaipur-jodhpur', from: 'JAIPUR', to: 'JODHPUR', highway: 'NH 48 (Marwar Highway)', departureTime: '22:00', duration: '06h 30m', nextStop: 'AJMER', type: 'ROYAL EXPRESS' },
-  { id: 'kolkata-siliguri', from: 'KOLKATA', to: 'SILIGURI', highway: 'NH 12 (North Bengal)', departureTime: '21:00', duration: '11h 00m', nextStop: 'MALDA', type: 'EXPRESS SLEEPER' },
-  { id: 'patna-ranchi', from: 'PATNA', to: 'RANCHI', highway: 'NH 20 (Chota Nagpur)', departureTime: '22:30', duration: '08h 15m', nextStop: 'HAZARIBAGH', type: 'DELUXE NIGHT BUS' },
-  { id: 'chandigarh-shimla', from: 'CHANDIGARH', to: 'SHIMLA', highway: 'NH 5 (Himalayan Queen)', departureTime: '23:00', duration: '04h 00m', nextStop: 'KALKA', type: 'DELUXE EXPRESS' },
-  { id: 'pune-mahabaleshwar', from: 'PUNE', to: 'MAHABALESHWAR', highway: 'NH 48 (Western Ghats)', departureTime: '23:15', duration: '03h 45m', nextStop: 'WAI', type: 'NIGHT SERVICE' }
+  { id: 'delhi-manali', from: 'DELHI', to: 'MANALI', highway: 'NH 44 (Himalayan Rider)', departureTime: '21:30', duration: '12h 00m', nextStop: 'CHANDIGARH', type: 'VOLVO AC SLEEPER', distanceKm: 540, durationMinutes: 720 },
+  { id: 'mumbai-goa', from: 'MUMBAI', to: 'GOA', highway: 'NH 66 (Konkan Highway)', departureTime: '20:45', duration: '11h 30m', nextStop: 'CHIPLUN', type: 'DELUXE SLEEPER', distanceKm: 590, durationMinutes: 690 },
+  { id: 'bangalore-ooty', from: 'BANGALORE', to: 'OOTY', highway: 'NH 275 (Nilgiri Ghats)', departureTime: '22:15', duration: '07h 45m', nextStop: 'MYSORE', type: 'NIGHT EXPRESS', distanceKm: 270, durationMinutes: 465 },
+  { id: 'jaipur-jodhpur', from: 'JAIPUR', to: 'JODHPUR', highway: 'NH 48 (Marwar Highway)', departureTime: '22:00', duration: '06h 30m', nextStop: 'AJMER', type: 'ROYAL EXPRESS', distanceKm: 335, durationMinutes: 390 },
+  { id: 'kolkata-siliguri', from: 'KOLKATA', to: 'SILIGURI', highway: 'NH 12 (North Bengal)', departureTime: '21:00', duration: '11h 00m', nextStop: 'MALDA', type: 'EXPRESS SLEEPER', distanceKm: 560, durationMinutes: 660 },
+  { id: 'patna-ranchi', from: 'PATNA', to: 'RANCHI', highway: 'NH 20 (Chota Nagpur)', departureTime: '22:30', duration: '08h 15m', nextStop: 'HAZARIBAGH', type: 'DELUXE NIGHT BUS', distanceKm: 330, durationMinutes: 495 },
+  { id: 'chandigarh-shimla', from: 'CHANDIGARH', to: 'SHIMLA', highway: 'NH 5 (Himalayan Queen)', departureTime: '23:00', duration: '04h 00m', nextStop: 'KALKA', type: 'DELUXE EXPRESS', distanceKm: 112, durationMinutes: 240 },
+  { id: 'pune-mahabaleshwar', from: 'PUNE', to: 'MAHABALESHWAR', highway: 'NH 48 (Western Ghats)', departureTime: '23:15', duration: '03h 45m', nextStop: 'WAI', type: 'NIGHT SERVICE', distanceKm: 120, durationMinutes: 225 }
 ];
 
 interface HotkeyToast {
@@ -32,6 +91,15 @@ interface JourneyState {
   
   ticket: Ticket | null;
   generateTicket: (route: Route) => void;
+
+  // Natural Distance Progress State
+  journeyStartTime: number | null;
+  totalDistanceKm: number;
+  remainingDistanceKm: number;
+  coveredDistanceKm: number;
+  journeyProgressPercent: number;
+  remainingTimeFormatted: string;
+  isJourneyCompleted: boolean;
   
   view: ViewMode;
   setView: (view: ViewMode) => void;
@@ -100,6 +168,78 @@ export function JourneyProvider({ children }: { children: ReactNode }) {
   const [appState, setAppState] = useState<AppState>('SPLASH');
   const [activeRoute, setActiveRoute] = useState<Route | null>(null);
   const [ticket, setTicket] = useState<Ticket | null>(null);
+  
+  // Natural Distance Progress System State
+  const [journeyStartTime, setJourneyStartTime] = useState<number | null>(() => {
+    const saved = localStorage.getItem('inj_journey_start_time');
+    return saved ? parseInt(saved, 10) : null;
+  });
+  const [remainingDistanceKm, setRemainingDistanceKm] = useState<number>(0);
+  const [coveredDistanceKm, setCoveredDistanceKm] = useState<number>(0);
+  const [totalDistanceKm, setTotalDistanceKm] = useState<number>(0);
+  const [journeyProgressPercent, setJourneyProgressPercent] = useState<number>(0);
+  const [remainingTimeFormatted, setRemainingTimeFormatted] = useState<string>('');
+  const [isJourneyCompleted, setIsJourneyCompleted] = useState<boolean>(false);
+
+  // Restore persisted ticket on mount if present
+  useEffect(() => {
+    if (!ticket) {
+      const savedTicket = localStorage.getItem('inj_ticket');
+      if (savedTicket) {
+        try {
+          const parsed = JSON.parse(savedTicket) as Ticket;
+          setTicket(parsed);
+        } catch (e) {
+          console.warn('Could not parse stored ticket', e);
+        }
+      }
+    }
+  }, []);
+
+  // Update distance progress continuously based on reliable timestamps
+  useEffect(() => {
+    if (!ticket) return;
+
+    let startTime = journeyStartTime;
+    if (!startTime) {
+      startTime = Date.now();
+      setJourneyStartTime(startTime);
+      localStorage.setItem('inj_journey_start_time', String(startTime));
+    }
+
+    const updateDistanceProgress = () => {
+      const durMins = ticket.route.durationMinutes || parseDurationMinutes(ticket.route.duration);
+      const totalKm = ticket.route.distanceKm || getRouteDistanceKm(ticket.route.from, ticket.route.to, durMins);
+      const totalDurationSeconds = Math.max(60, durMins * 60);
+
+      const elapsedSeconds = Math.max(0, (Date.now() - startTime!) / 1000);
+      const remainingSeconds = Math.max(0, totalDurationSeconds - elapsedSeconds);
+      const ratio = Math.min(1.0, Math.max(0.0, elapsedSeconds / totalDurationSeconds));
+
+      const remainingKm = Math.max(0, Math.min(totalKm, Math.round(totalKm * (1.0 - ratio))));
+      const coveredKm = totalKm - remainingKm;
+      const progressPercent = Math.min(100, Math.max(0, ratio * 100));
+
+      setTotalDistanceKm(totalKm);
+      setRemainingDistanceKm(remainingKm);
+      setCoveredDistanceKm(coveredKm);
+      setJourneyProgressPercent(progressPercent);
+      setIsJourneyCompleted(remainingSeconds <= 0 && elapsedSeconds > 0);
+
+      const h = Math.floor(remainingSeconds / 3600);
+      const m = Math.floor((remainingSeconds % 3600) / 60);
+      const s = Math.floor(remainingSeconds % 60);
+      if (h > 0) {
+        setRemainingTimeFormatted(`${h}h ${m}m`);
+      } else {
+        setRemainingTimeFormatted(`${m}:${s < 10 ? '0' : ''}${s}`);
+      }
+    };
+
+    updateDistanceProgress();
+    const interval = setInterval(updateDistanceProgress, 1000);
+    return () => clearInterval(interval);
+  }, [ticket, journeyStartTime]);
   
   const [view, setView] = useState<ViewMode>('WINDOW');
   const [isRainy, setIsRainy] = useState(false);
@@ -215,14 +355,27 @@ export function JourneyProvider({ children }: { children: ReactNode }) {
   };
 
   const generateTicket = (route: Route) => {
+    const durMins = route.durationMinutes || parseDurationMinutes(route.duration);
+    const distKm = route.distanceKm || getRouteDistanceKm(route.from, route.to, durMins);
+    const enrichedRoute: Route = {
+      ...route,
+      durationMinutes: durMins,
+      distanceKm: distKm
+    };
+
+    const startTime = Date.now();
+    setJourneyStartTime(startTime);
+    localStorage.setItem('inj_journey_start_time', String(startTime));
+
     const newTicket: Ticket = {
       pnr: Math.random().toString(36).substring(2, 10).toUpperCase(),
       seat: ['W', 'D', 'L'][Math.floor(Math.random() * 3)] + Math.floor(Math.random() * 20 + 1),
-      route,
-      boardingTime: route.departureTime,
+      route: enrichedRoute,
+      boardingTime: enrichedRoute.departureTime,
       journeyNumber: 'INJ-' + Math.floor(Math.random() * 9000 + 1000)
     };
     setTicket(newTicket);
+    localStorage.setItem('inj_ticket', JSON.stringify(newTicket));
   };
 
   const playSynthHorn = () => {
@@ -477,6 +630,13 @@ export function JourneyProvider({ children }: { children: ReactNode }) {
       routes: ROUTES,
       activeRoute, setActiveRoute,
       ticket, generateTicket,
+      journeyStartTime,
+      totalDistanceKm,
+      remainingDistanceKm,
+      coveredDistanceKm,
+      journeyProgressPercent,
+      remainingTimeFormatted,
+      isJourneyCompleted,
       view, setView,
       isRainy, setIsRainy, toggleRain,
       hornActive, selectedHornIndex, setSelectedHornIndex, triggerHorn,

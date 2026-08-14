@@ -215,7 +215,9 @@ export function VirtualTicket() {
                   </div>
                   <div className="flex flex-col">
                     <span className="text-[7.5px] sm:text-[8px] md:text-[9px] uppercase tracking-[0.15em] font-mono text-[#2c241b]/50 mb-0.5">SERVICE</span>
-                    <span className="text-xs sm:text-xs md:text-sm font-bold font-mono text-[#2c241b] tracking-wider">NIGHT EXPRESS</span>
+                    <span className="text-xs sm:text-xs md:text-sm font-bold font-mono text-[#2c241b] tracking-wider">
+                      {ticket.route.distanceKm ? `${ticket.route.distanceKm} KM • NIGHT` : 'NIGHT EXPRESS'}
+                    </span>
                   </div>
                   <div className="flex flex-col text-right">
                     <span className="text-[7.5px] sm:text-[8px] md:text-[9px] uppercase tracking-[0.15em] font-mono text-[#2c241b]/50 mb-0.5">SEAT</span>

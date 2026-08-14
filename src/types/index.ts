@@ -8,6 +8,8 @@ export interface Route {
   nextStop: string;
   fare?: string;
   type?: string;
+  distanceKm?: number;
+  durationMinutes?: number;
 }
 
 export interface Ticket {
