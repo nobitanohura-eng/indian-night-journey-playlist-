@@ -7,7 +7,25 @@
   ],
   "headers": [
     {
-      "source": "/(.*\.(png|jpg|jpeg|webp|gif|svg|ico|mp3|wav|ogg|m4a|woff2?))",
+      "source": "/music/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/horns/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
