@@ -9,6 +9,7 @@ import { HUD } from './ui/HUD';
 import { AudioEngine } from './AudioEngine';
 import { ChaiBreakOverlay } from './ui/ChaiBreakOverlay';
 import { KeyboardShortcutsModal } from './ui/KeyboardShortcutsModal';
+import { PwaInstallPrompt } from './ui/PwaInstallPrompt';
 
 export function Layout() {
   const { view, isChaiBreak } = useJourney();
@@ -28,6 +29,9 @@ export function Layout() {
 
       {/* Keyboard Shortcuts Modal */}
       <KeyboardShortcutsModal />
+
+      {/* PWA Home Screen Add Prompt */}
+      <PwaInstallPrompt />
       
       <AudioEngine />
       <AnimatePresence>
