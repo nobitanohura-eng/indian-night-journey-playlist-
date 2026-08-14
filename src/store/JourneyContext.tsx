@@ -503,10 +503,10 @@ export function JourneyProvider({ children }: { children: ReactNode }) {
     setIsRainy(prev => {
       const next = !prev;
       showToast(next ? 'MONSOON RAIN ON' : 'CLEAR NIGHT SKY', next ? '🌧' : '🌙', 'Keyboard [R]');
-      // Trigger rain song ONLY on the 1st time rain turns ON
+      // Trigger rain song DIRECTLY on user gesture without setTimeout for PWA compatibility
       if (next && !hasTriggeredFirstRainRef.current) {
         hasTriggeredFirstRainRef.current = true;
-        setTimeout(() => playBarsaatSong(), 50);
+        playBarsaatSong();
       }
       return next;
     });
